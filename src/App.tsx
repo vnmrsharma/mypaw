@@ -48,6 +48,22 @@ function App() {
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [currentDietPlan, setCurrentDietPlan] = useState<DietPlanType | null>(null);
 
+  // Save current step to localStorage whenever it changes
+  useEffect(() => {
+    if (currentStep !== 'landing' && currentStep !== 'auth') {
+      localStorage.setItem('mypaw-current-step', currentStep);
+    }
+  }, [currentStep]);
+
+  // Save current pet to localStorage whenever it changes
+  useEffect(() => {
+    if (currentPet) {
+      localStorage.setItem('mypaw-current-pet', JSON.stringify(currentPet));
+    } else {
+      localStorage.removeItem('mypaw-current-pet');
+    }
+  }, [currentPet]);
+
   useEffect(() => {
     // Set a timeout to prevent infinite loading
     const loadingTimeout = setTimeout(() => {
@@ -65,12 +81,18 @@ function App() {
         console.log('Auth state change:', event, session?.user?.id);
         if (session?.user) {
           setUser(session.user);
-          await loadUserPets();
+          // Only load pets if we don't have them already or if this is a fresh login
+          if (pets.length === 0 || event === 'SIGNED_IN') {
+            await loadUserPets(event === 'SIGNED_IN'); // Force step change only on fresh login
+          }
         } else {
           setUser(null);
           setPets([]);
           setCurrentPet(null);
           setCurrentStep('landing');
+          // Clear localStorage when user signs out
+          localStorage.removeItem('mypaw-current-step');
+          localStorage.removeItem('mypaw-current-pet');
         }
         setAuthLoading(false);
       }
@@ -80,7 +102,7 @@ function App() {
       subscription.unsubscribe();
       clearTimeout(loadingTimeout);
     };
-  }, []);
+  }, [pets.length]);
 
   const checkAuthState = async () => {
     try {
@@ -88,7 +110,7 @@ function App() {
       if (currentUser) {
         setUser(currentUser);
         console.log('Current user found:', currentUser.id);
-        await loadUserPets();
+        await loadUserPets(true); // Force step change on initial load
       } else {
         // No user found, stay on landing page
         setCurrentStep('landing');
@@ -101,21 +123,48 @@ function App() {
     }
   };
 
-  const loadUserPets = async () => {
+  const loadUserPets = async (forceStepChange = false) => {
     try {
       console.log('Loading user pets...');
       const fetchedPets = await getPets();
       console.log('Fetched pets:', fetchedPets.length);
       setPets(fetchedPets);
       
-      if (fetchedPets.length > 0) {
-        setCurrentStep('dashboard');
-      } else {
-        setCurrentStep('upload');
+      // Only change step if we're forcing it or if we're currently on landing/auth
+      if (forceStepChange || currentStep === 'landing' || currentStep === 'auth') {
+        // Try to restore previous state from localStorage
+        const savedStep = localStorage.getItem('mypaw-current-step') as AppStep;
+        const savedPet = localStorage.getItem('mypaw-current-pet');
+        
+        if (savedStep && savedPet && fetchedPets.length > 0) {
+          try {
+            const parsedPet = JSON.parse(savedPet);
+            // Verify the saved pet still exists in the fetched pets
+            const petExists = fetchedPets.find(pet => pet.id === parsedPet.id);
+            if (petExists) {
+              setCurrentPet(parsedPet);
+              setCurrentStep(savedStep);
+              console.log('Restored previous state:', savedStep, parsedPet.name);
+              return;
+            }
+          } catch (error) {
+            console.error('Error parsing saved pet:', error);
+          }
+        }
+        
+        // Fallback to default logic
+        if (fetchedPets.length > 0) {
+          setCurrentStep('dashboard');
+        } else {
+          setCurrentStep('upload');
+        }
       }
     } catch (error) {
       console.error('Error loading user pet:', error);
-      setCurrentStep('upload');
+      // Only change to upload if we're not already in a valid step
+      if (currentStep === 'landing' || currentStep === 'auth') {
+        setCurrentStep('upload');
+      }
     }
   };
 
@@ -154,6 +203,9 @@ function App() {
 
   const handleSignOut = async () => {
     try {
+      // Clear localStorage when signing out
+      localStorage.removeItem('mypaw-current-step');
+      localStorage.removeItem('mypaw-current-pet');
       await signOut();
     } catch (error) {
       console.error('Error signing out:', error);
