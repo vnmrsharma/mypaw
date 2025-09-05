@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Brain, CheckCircle, XCircle, RotateCcw, Sparkles, Trophy, Star, Heart, Target } from 'lucide-react';
+import { ArrowLeft, Brain, CheckCircle, XCircle, RotateCcw, Sparkles, Trophy, Star, Heart, Target, MessageCircle, Utensils } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generatePetMoodScenario } from '../services/openai';
 import type { Pet, PetMoodScenario } from '../types';
@@ -7,9 +7,11 @@ import type { Pet, PetMoodScenario } from '../types';
 interface PawMoodProps {
   pet: Pet;
   onBack: () => void;
+  onShowChat?: () => void;
+  onShowDietPlan?: () => void;
 }
 
-const PawMood: React.FC<PawMoodProps> = ({ pet, onBack }) => {
+const PawMood: React.FC<PawMoodProps> = ({ pet, onBack, onShowChat, onShowDietPlan }) => {
   const [currentScenario, setCurrentScenario] = useState<PetMoodScenario | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMood, setSelectedMood] = useState<string>('');
@@ -566,6 +568,128 @@ const PawMood: React.FC<PawMoodProps> = ({ pet, onBack }) => {
               </motion.button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200 p-4 shadow-lg relative z-10">
+        <div className="flex justify-center">
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-2 shadow-xl border border-white/20 max-w-sm w-full">
+            <div className="grid grid-cols-3 gap-2">
+              {/* Chat Button */}
+              <motion.button
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onShowChat}
+                className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 text-purple-600 rounded-2xl px-4 py-3 flex flex-col items-center justify-center hover:bg-purple-50 transition-all shadow-md relative overflow-hidden group"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="mb-1"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                </motion.div>
+                <span className="font-semibold text-xs">Chat</span>
+                
+                {/* Pet emoji indicator */}
+                <motion.div
+                  animate={{ 
+                    y: [0, -1, 0],
+                    rotate: [0, 10, -10, 0]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                  className="absolute -top-1 -right-1 text-sm opacity-70"
+                >
+                  💬
+                </motion.div>
+                
+                {/* Hover effect */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileHover={{ scale: 1, opacity: 0.1 }}
+                  className="absolute inset-0 bg-purple-400 rounded-2xl"
+                />
+              </motion.button>
+
+              {/* Diet Plan Button */}
+              <motion.button
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onShowDietPlan}
+                className="bg-white/80 backdrop-blur-sm border-2 border-emerald-200 text-emerald-600 rounded-2xl px-4 py-3 flex flex-col items-center justify-center hover:bg-emerald-50 transition-all shadow-md relative overflow-hidden group"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="mb-1"
+                >
+                  <Utensils className="w-5 h-5" />
+                </motion.div>
+                <span className="font-semibold text-xs">Diet</span>
+                
+                {/* Pet emoji indicator */}
+                <motion.div
+                  animate={{ 
+                    y: [0, -1, 0],
+                    rotate: [0, 10, -10, 0]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                  className="absolute -top-1 -right-1 text-sm opacity-70"
+                >
+                  🍽️
+                </motion.div>
+                
+                {/* Hover effect */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileHover={{ scale: 1, opacity: 0.1 }}
+                  className="absolute inset-0 bg-emerald-400 rounded-2xl"
+                />
+              </motion.button>
+
+              {/* PawMood Button - Active */}
+              <motion.div
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative"
+              >
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl px-4 py-3 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
+                  {/* Animated background */}
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      opacity: [0.3, 0.6, 0.3]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 bg-white/20 rounded-2xl"
+                  />
+                  
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 5, -5, 0]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="relative z-10"
+                  >
+                    <Brain className="w-5 h-5 mb-1" />
+                  </motion.div>
+                  <span className="font-semibold text-xs relative z-10">Mood</span>
+                  
+                  {/* Pet emoji indicator */}
+                  <motion.div
+                    animate={{ 
+                      y: [0, -2, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                    className="absolute -top-1 -right-1 text-lg"
+                  >
+                    🧠
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

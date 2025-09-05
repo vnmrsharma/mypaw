@@ -431,6 +431,8 @@ function App() {
             pet={currentPet}
             onBack={handleBackToDashboard}
             onDietPlanUpdated={(dietPlan) => setCurrentDietPlan(dietPlan)}
+            onShowChat={handleBackToChat}
+            onShowPawMood={handleShowPawMood}
           />
         );
       
@@ -439,6 +441,8 @@ function App() {
           <PawMood
             pet={currentPet}
             onBack={handleBackToDashboard}
+            onShowChat={handleBackToChat}
+            onShowDietPlan={handleShowDietPlan}
           />
         );
       
