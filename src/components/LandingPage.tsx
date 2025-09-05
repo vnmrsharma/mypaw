@@ -55,6 +55,74 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         >
           🐰
         </motion.div>
+        
+        {/* Additional pet elements */}
+        <motion.div 
+          animate={{ 
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear", delay: 2 }}
+          className="absolute top-60 left-1/3 w-6 h-6 text-blue-300 opacity-40"
+        >
+          🐶
+        </motion.div>
+        <motion.div 
+          animate={{ 
+            x: [0, -60, 0],
+            y: [0, 40, 0],
+            rotate: [0, 45, 0]
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "linear", delay: 8 }}
+          className="absolute top-80 right-1/4 w-7 h-7 text-green-300 opacity-35"
+        >
+          🐱
+        </motion.div>
+        <motion.div 
+          animate={{ 
+            x: [0, 30, 0],
+            y: [0, -20, 0],
+            scale: [1, 0.8, 1]
+          }}
+          transition={{ duration: 14, repeat: Infinity, ease: "linear", delay: 4 }}
+          className="absolute bottom-60 left-1/5 w-5 h-5 text-red-300 opacity-40"
+        >
+          🐹
+        </motion.div>
+        <motion.div 
+          animate={{ 
+            x: [0, -50, 0],
+            y: [0, 25, 0],
+            rotate: [0, -45, 0]
+          }}
+          transition={{ duration: 19, repeat: Infinity, ease: "linear", delay: 6 }}
+          className="absolute bottom-80 right-1/5 w-6 h-6 text-indigo-300 opacity-35"
+        >
+          🐦
+        </motion.div>
+        <motion.div 
+          animate={{ 
+            x: [0, 40, 0],
+            y: [0, -35, 0],
+            scale: [1, 1.3, 1]
+          }}
+          transition={{ duration: 13, repeat: Infinity, ease: "linear", delay: 9 }}
+          className="absolute top-40 left-2/3 w-5 h-5 text-teal-300 opacity-40"
+        >
+          🐠
+        </motion.div>
+        <motion.div 
+          animate={{ 
+            x: [0, -30, 0],
+            y: [0, 20, 0],
+            rotate: [0, 180, 360]
+          }}
+          transition={{ duration: 17, repeat: Infinity, ease: "linear", delay: 3 }}
+          className="absolute bottom-32 left-2/3 w-6 h-6 text-amber-300 opacity-35"
+        >
+          🐢
+        </motion.div>
       </div>
 
       {/* Header */}
@@ -175,7 +243,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="absolute inset-4 bg-white rounded-2xl overflow-hidden">
                   <div className="h-full bg-gradient-to-br from-purple-50 to-pink-50 p-4">
                     <div className="flex items-center mb-4">
-                      <div className="w-8 h-8 bg-orange-400 rounded-full mr-3"></div>
+                      <div className="w-8 h-8 bg-orange-400 rounded-full mr-3 flex items-center justify-center text-white text-sm">
+                        🐕
+                      </div>
                       <div>
                         <div className="h-2 bg-gray-300 rounded w-16 mb-1"></div>
                         <div className="h-1 bg-gray-200 rounded w-12"></div>
@@ -184,22 +254,38 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     
                     <div className="space-y-3">
                       <div className="flex justify-start">
-                        <div className="bg-white rounded-2xl px-3 py-2 max-w-48">
-                          <div className="h-2 bg-gray-300 rounded w-32 mb-1"></div>
-                          <div className="h-2 bg-gray-200 rounded w-24"></div>
+                        <div className="bg-white rounded-2xl px-3 py-2 max-w-48 shadow-sm">
+                          <div className="flex items-center mb-1">
+                            <span className="text-xs mr-1">🐾</span>
+                            <div className="h-2 bg-gray-300 rounded w-24"></div>
+                          </div>
+                          <div className="h-2 bg-gray-200 rounded w-20"></div>
                         </div>
                       </div>
                       <div className="flex justify-end">
-                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl px-3 py-2 max-w-32">
+                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl px-3 py-2 max-w-32 shadow-sm">
                           <div className="h-2 bg-white/80 rounded w-20"></div>
                         </div>
                       </div>
                       <div className="flex justify-start">
-                        <div className="bg-white rounded-2xl px-3 py-2 max-w-40">
-                          <div className="h-2 bg-gray-300 rounded w-28 mb-1"></div>
-                          <div className="h-2 bg-gray-200 rounded w-20"></div>
+                        <div className="bg-white rounded-2xl px-3 py-2 max-w-40 shadow-sm">
+                          <div className="flex items-center mb-1">
+                            <span className="text-xs mr-1">❤️</span>
+                            <div className="h-2 bg-gray-300 rounded w-20"></div>
+                          </div>
+                          <div className="h-2 bg-gray-200 rounded w-16"></div>
                         </div>
                       </div>
+                      <div className="flex justify-end">
+                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl px-3 py-2 max-w-28 shadow-sm">
+                          <div className="h-2 bg-white/80 rounded w-16"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Pet emoji in corner */}
+                    <div className="absolute bottom-4 right-4 text-2xl opacity-60">
+                      🐱
                     </div>
                   </div>
                 </div>
@@ -212,9 +298,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   rotate: [0, 5, 0]
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg"
+                className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg text-2xl"
               >
-                <Heart className="w-8 h-8 text-white" />
+                🐕
               </motion.div>
 
               <motion.div
@@ -223,9 +309,45 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   rotate: [0, -5, 0]
                 }}
                 transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                className="absolute -bottom-4 -left-4 w-12 h-12 bg-green-400 rounded-full flex items-center justify-center shadow-lg"
+                className="absolute -bottom-4 -left-4 w-12 h-12 bg-green-400 rounded-full flex items-center justify-center shadow-lg text-xl"
               >
-                <Brain className="w-6 h-6 text-white" />
+                🐱
+              </motion.div>
+
+              <motion.div
+                animate={{ 
+                  x: [0, 15, 0],
+                  y: [0, -8, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+                className="absolute -top-8 left-1/2 w-10 h-10 bg-pink-400 rounded-full flex items-center justify-center shadow-lg text-lg"
+              >
+                🐾
+              </motion.div>
+
+              <motion.div
+                animate={{ 
+                  x: [0, -12, 0],
+                  y: [0, 6, 0],
+                  rotate: [0, 10, 0]
+                }}
+                transition={{ duration: 3.5, repeat: Infinity, delay: 1.5 }}
+                className="absolute -bottom-8 right-1/3 w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center shadow-lg text-sm"
+              >
+                🐰
+              </motion.div>
+
+              <motion.div
+                animate={{ 
+                  x: [0, 8, 0],
+                  y: [0, -12, 0],
+                  scale: [1, 0.9, 1]
+                }}
+                transition={{ duration: 2.8, repeat: Infinity, delay: 2 }}
+                className="absolute top-1/2 -left-6 w-9 h-9 bg-purple-400 rounded-full flex items-center justify-center shadow-lg text-sm"
+              >
+                🐹
               </motion.div>
             </motion.div>
           </div>
@@ -258,16 +380,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             {[
               {
                 icon: Camera,
+                emoji: "📸",
                 title: "Smart Pet Recognition",
                 description: "Upload a photo and our AI instantly identifies your pet's breed, personality, and care needs."
               },
               {
                 icon: MessageCircle,
+                emoji: "💬",
                 title: "Natural Conversations",
                 description: "Chat with your pet using AI that understands their unique personality and responds authentically."
               },
               {
                 icon: Brain,
+                emoji: "🧠",
                 title: "Personalized Care",
                 description: "Get custom diet plans and mood insights tailored specifically to your pet's needs and behavior."
               }
@@ -278,13 +403,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.8 + index * 0.2 }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 text-center hover:shadow-xl transition-all duration-300"
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 text-center hover:shadow-xl transition-all duration-300 relative overflow-hidden"
               >
+                {/* Pet emoji in corner */}
+                <div className="absolute top-4 right-4 text-2xl opacity-20">
+                  {index === 0 ? "🐕" : index === 1 ? "🐱" : "🐾"}
+                </div>
+                
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+                  className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg relative"
                 >
                   <feature.icon className="w-8 h-8 text-white" />
+                  <div className="absolute -top-1 -right-1 text-lg">
+                    {feature.emoji}
+                  </div>
                 </motion.div>
                 <h3 className="text-xl font-bold text-gray-800 mb-4">{feature.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{feature.description}</p>
