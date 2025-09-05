@@ -131,7 +131,6 @@ export default function ChatInterface({ pet, onBack, onShowDietPlan, onShowPawMo
               key={message.id}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.02 }}
               className={`flex ${message.is_from_pet ? 'justify-start' : 'justify-end'}`}
             >
               <div className={`max-w-xs lg:max-w-md ${message.is_from_pet ? '' : 'flex flex-col items-end'}`}>
