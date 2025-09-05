@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Components
 import LandingPage from './components/LandingPage';
 import AuthForm from './components/AuthForm';
 import ImageUpload from './components/ImageUpload';
@@ -10,6 +12,8 @@ import ChatInterface from './components/ChatInterface';
 import DietPlan from './components/DietPlan';
 import Dashboard from './components/Dashboard';
 import PawMood from './components/PawMood';
+
+// Services
 import { identifyPet } from './services/gemini';
 import { createPetPersona, chatWithPet } from './services/openai';
 import { 
@@ -25,8 +29,11 @@ import {
   getCurrentUser,
   supabase
 } from './services/supabase';
+
+// Types
 import type { Pet, GeminiResponse, ChatMessage, DietPlan as DietPlanType } from './types';
 
+// App flow steps - keeping it simple for now
 type AppStep = 'landing' | 'auth' | 'dashboard' | 'upload' | 'identify' | 'register' | 'chat' | 'diet' | 'pawmood';
 
 interface ChatHistory {
@@ -35,27 +42,34 @@ interface ChatHistory {
 }
 
 function App() {
+  // Main app state
   const [currentStep, setCurrentStep] = useState<AppStep>('landing');
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  
+  // Pet registration flow
   const [capturedImage, setCapturedImage] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [petInfo, setPetInfo] = useState<GeminiResponse | null>(null);
+  
+  // Pet data
   const [pets, setPets] = useState<Pet[]>([]);
   const [currentPet, setCurrentPet] = useState<Pet | null>(null);
+  
+  // Chat functionality
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [currentDietPlan, setCurrentDietPlan] = useState<DietPlanType | null>(null);
 
-  // Save current step to localStorage whenever it changes
+  // Persist current step so users don't lose their place on refresh
   useEffect(() => {
     if (currentStep !== 'landing' && currentStep !== 'auth') {
       localStorage.setItem('mypaw-current-step', currentStep);
     }
   }, [currentStep]);
 
-  // Save current pet to localStorage whenever it changes
+  // Keep track of which pet the user is currently interacting with
   useEffect(() => {
     if (currentPet) {
       localStorage.setItem('mypaw-current-pet', JSON.stringify(currentPet));
@@ -64,8 +78,9 @@ function App() {
     }
   }, [currentPet]);
 
+  // Handle authentication and app initialization
   useEffect(() => {
-    // Set a timeout to prevent infinite loading
+    // Safety net in case auth gets stuck loading
     const loadingTimeout = setTimeout(() => {
       if (authLoading) {
         console.warn('Auth loading timeout, setting to false');
@@ -73,24 +88,27 @@ function App() {
       }
     }, 5000);
 
+    // Check if user is already logged in
     checkAuthState();
     
-    // Listen for auth changes
+    // Listen for auth state changes (login/logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, session?.user?.id);
+        
         if (session?.user) {
           setUser(session.user);
-          // Only load pets if we don't have them already or if this is a fresh login
+          // Only reload pets if we don't have any or this is a fresh login
           if (pets.length === 0 || event === 'SIGNED_IN') {
-            await loadUserPets(event === 'SIGNED_IN'); // Force step change only on fresh login
+            await loadUserPets(event === 'SIGNED_IN');
           }
         } else {
+          // User signed out - reset everything
           setUser(null);
           setPets([]);
           setCurrentPet(null);
           setCurrentStep('landing');
-          // Clear localStorage when user signs out
+          // Clean up localStorage
           localStorage.removeItem('mypaw-current-step');
           localStorage.removeItem('mypaw-current-pet');
         }
@@ -98,21 +116,24 @@ function App() {
       }
     );
 
+    // Cleanup
     return () => {
       subscription.unsubscribe();
       clearTimeout(loadingTimeout);
     };
   }, [pets.length]);
 
+  // Check if user is already authenticated on app load
   const checkAuthState = async () => {
     try {
       const currentUser = await getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
         console.log('Current user found:', currentUser.id);
-        await loadUserPets(true); // Force step change on initial load
+        // Force step change since this is initial load
+        await loadUserPets(true);
       } else {
-        // No user found, stay on landing page
+        // No user found, show landing page
         setCurrentStep('landing');
       }
     } catch (error) {
@@ -123,6 +144,7 @@ function App() {
     }
   };
 
+  // Load user's pets and handle navigation logic
   const loadUserPets = async (forceStepChange = false) => {
     try {
       console.log('Loading user pets...');
@@ -130,16 +152,16 @@ function App() {
       console.log('Fetched pets:', fetchedPets.length);
       setPets(fetchedPets);
       
-      // Only change step if we're forcing it or if we're currently on landing/auth
+      // Only change step if we need to or if we're on landing/auth pages
       if (forceStepChange || currentStep === 'landing' || currentStep === 'auth') {
-        // Try to restore previous state from localStorage
+        // Try to restore where the user was before
         const savedStep = localStorage.getItem('mypaw-current-step') as AppStep;
         const savedPet = localStorage.getItem('mypaw-current-pet');
         
         if (savedStep && savedPet && fetchedPets.length > 0) {
           try {
             const parsedPet = JSON.parse(savedPet);
-            // Verify the saved pet still exists in the fetched pets
+            // Make sure the pet still exists (in case it was deleted)
             const petExists = fetchedPets.find(pet => pet.id === parsedPet.id);
             if (petExists) {
               setCurrentPet(parsedPet);
@@ -152,7 +174,7 @@ function App() {
           }
         }
         
-        // Fallback to default logic
+        // Default behavior - go to dashboard if they have pets, upload if they don't
         if (fetchedPets.length > 0) {
           setCurrentStep('dashboard');
         } else {
@@ -161,49 +183,55 @@ function App() {
       }
     } catch (error) {
       console.error('Error loading user pet:', error);
-      // Only change to upload if we're not already in a valid step
+      // Only redirect to upload if we're on landing/auth pages
       if (currentStep === 'landing' || currentStep === 'auth') {
         setCurrentStep('upload');
       }
     }
   };
 
+  // User selected a pet from the dashboard
   const handleSelectPet = async (pet: Pet) => {
     setCurrentPet(pet);
+    // Load their chat history and diet plan
     await loadChatMessages(pet.id);
     await loadDietPlan(pet.id);
     setCurrentStep('chat');
   };
 
+  // User wants to add another pet
   const handleAddNewPet = () => {
     setCurrentStep('upload');
   };
 
+  // Handle user registration
   const handleSignUp = async (email: string, password: string) => {
     setAuthLoading(true);
     try {
       await signUp(email, password);
-      // User will be set via auth state change listener
+      // Auth state change listener will handle the rest
     } catch (error) {
       setAuthLoading(false);
       throw error;
     }
   };
 
+  // Handle user login
   const handleSignIn = async (email: string, password: string) => {
     setAuthLoading(true);
     try {
       await signIn(email, password);
-      // User will be set via auth state change listener
+      // Auth state change listener will handle the rest
     } catch (error) {
       setAuthLoading(false);
       throw error;
     }
   };
 
+  // Handle user logout
   const handleSignOut = async () => {
     try {
-      // Clear localStorage when signing out
+      // Clean up localStorage
       localStorage.removeItem('mypaw-current-step');
       localStorage.removeItem('mypaw-current-pet');
       await signOut();

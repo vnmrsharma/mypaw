@@ -1,8 +1,10 @@
 import type { AIResponse } from '../types';
 
+// OpenAI API configuration
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
+// Create the initial greeting message for a new pet
 export const createPetPersona = async (petInfo: string, breed: string, type: string, petName: string): Promise<string> => {
   if (!OPENAI_API_KEY) {
     console.error('OpenAI API key not configured');
@@ -49,6 +51,7 @@ Pet information: ${petInfo}`;
   }
 };
 
+// Handle ongoing chat conversations with the pet
 export const chatWithPet = async (
   message: string,
   petInfo: string,

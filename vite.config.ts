@@ -1,13 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
+// Vite configuration for MyPaw app
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
+    port: 3000, // Run on localhost:3000
   },
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    exclude: ['lucide-react'], // Exclude from pre-bundling
   },
 });

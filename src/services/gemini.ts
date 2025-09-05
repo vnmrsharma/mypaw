@@ -1,8 +1,10 @@
 import type { GeminiResponse } from '../types';
 
+// Google Gemini API configuration
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
+// Use Gemini to identify pet from uploaded image
 export const identifyPet = async (imageBase64: string): Promise<GeminiResponse | null> => {
   if (!GEMINI_API_KEY) {
     console.error('Gemini API key not configured');

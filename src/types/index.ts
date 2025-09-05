@@ -1,3 +1,4 @@
+// Pet data structure
 export interface Pet {
   id: string;
   name: string;
@@ -10,6 +11,7 @@ export interface Pet {
   created_at: string;
 }
 
+// Chat message structure
 export interface ChatMessage {
   id: string;
   pet_id: string;
@@ -20,6 +22,7 @@ export interface ChatMessage {
   created_at: string;
 }
 
+// Response from Gemini AI for pet identification
 export interface GeminiResponse {
   type: string;
   breed?: string;
@@ -28,6 +31,7 @@ export interface GeminiResponse {
   care_tips: string[];
 }
 
+// Main app state structure
 export interface AppState {
   currentPet: Pet | null;
   pets: Pet[];
@@ -35,6 +39,7 @@ export interface AppState {
   isLoading: boolean;
 }
 
+// Diet plan structure for pets
 export interface DietPlan {
   id: string;
   pet_id: string;
@@ -57,11 +62,13 @@ export interface DietPlan {
   created_at: string;
 }
 
+// AI response structure
 export interface AIResponse {
   response: string;
   reasoning: string;
 }
 
+// Pet mood scenario for the educational game
 export interface PetMoodScenario {
   scenario: string;
   correct_mood: string;

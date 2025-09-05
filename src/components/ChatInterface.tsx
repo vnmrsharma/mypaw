@@ -15,15 +15,18 @@ interface ChatInterfaceProps {
 }
 
 export default function ChatInterface({ pet, onBack, onShowDietPlan, onShowPawMood, messages, onSendMessage, isLoading, dietPlan }: ChatInterfaceProps) {
+  // Chat input state
   const [newMessage, setNewMessage] = useState('');
   const [expandedReasons, setExpandedReasons] = useState<Set<string>>(new Set());
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  // Toggle the reasoning explanation for a message
   const toggleReasoning = (messageId: string) => {
     const newExpanded = new Set(expandedReasons);
     if (newExpanded.has(messageId)) {

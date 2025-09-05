@@ -2,13 +2,13 @@ import { createClient } from '@supabase/supabase-js';
 import type { User } from '@supabase/supabase-js';
 import type { Pet, ChatMessage, DietPlan } from '../types';
 
-// Replace with your actual Supabase URL and anon key
+// Supabase config - using env vars for security
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'your-supabase-url';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Auth functions
+// Authentication functions
 export const signUp = async (email: string, password: string): Promise<User | null> => {
   try {
     const { data, error } = await supabase.auth.signUp({
@@ -51,7 +51,7 @@ export const signOut = async (): Promise<void> => {
 
 export const getCurrentUser = async (): Promise<User | null> => {
   try {
-    // Add timeout to prevent hanging
+    // Add timeout to prevent hanging on slow connections
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error('Auth timeout')), 3000);
     });
