@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'framer-motion';
+import LandingPage from './components/LandingPage';
 import AuthForm from './components/AuthForm';
 import ImageUpload from './components/ImageUpload';
 import PetIdentification from './components/PetIdentification';
@@ -24,9 +25,9 @@ import {
   getCurrentUser,
   supabase
 } from './services/supabase';
-import type { Pet, GeminiResponse, ChatMessage, DietPlan as DietPlanType, AIResponse } from './types';
+import type { Pet, GeminiResponse, ChatMessage, DietPlan as DietPlanType } from './types';
 
-type AppStep = 'auth' | 'dashboard' | 'upload' | 'identify' | 'register' | 'chat' | 'diet' | 'pawmood';
+type AppStep = 'landing' | 'auth' | 'dashboard' | 'upload' | 'identify' | 'register' | 'chat' | 'diet' | 'pawmood';
 
 interface ChatHistory {
   role: string;
@@ -34,7 +35,7 @@ interface ChatHistory {
 }
 
 function App() {
-  const [currentStep, setCurrentStep] = useState<AppStep>('auth');
+  const [currentStep, setCurrentStep] = useState<AppStep>('landing');
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -69,7 +70,7 @@ function App() {
           setUser(null);
           setPets([]);
           setCurrentPet(null);
-          setCurrentStep('auth');
+          setCurrentStep('landing');
         }
         setAuthLoading(false);
       }
@@ -88,9 +89,13 @@ function App() {
         setUser(currentUser);
         console.log('Current user found:', currentUser.id);
         await loadUserPets();
+      } else {
+        // No user found, stay on landing page
+        setCurrentStep('landing');
       }
     } catch (error) {
       console.error('Error checking auth state:', error);
+      setCurrentStep('landing');
     } finally {
       setAuthLoading(false);
     }
@@ -336,6 +341,10 @@ function App() {
     setCurrentStep('chat');
   };
 
+  const handleGetStarted = () => {
+    setCurrentStep('auth');
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 flex items-center justify-center">
@@ -349,6 +358,13 @@ function App() {
 
   const renderCurrentStep = () => {
     switch (currentStep) {
+      case 'landing':
+        return (
+          <LandingPage
+            onGetStarted={handleGetStarted}
+          />
+        );
+        
       case 'auth':
         return (
           <AuthForm
@@ -431,7 +447,7 @@ function App() {
     }
   };
 
-  if (currentStep === 'auth' || currentStep === 'dashboard' || currentStep === 'chat' || currentStep === 'diet' || currentStep === 'pawmood') {
+  if (currentStep === 'landing' || currentStep === 'auth' || currentStep === 'dashboard' || currentStep === 'chat' || currentStep === 'diet' || currentStep === 'pawmood') {
     return renderCurrentStep();
   }
 
